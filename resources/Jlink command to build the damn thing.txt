@@ -1,0 +1,1 @@
+C:\Program Files\Java\jdk-11.0.2\bin\jlink --module-path "C:\Program Files\Java\javafx-jmods-11.0.2;C:\Users\jespo\IdeaProjects\FE9Randomizer2.0\mods\artifacts\FE9Randomizer_jar" --add-modules "FE9Randomizer" --output "FE9 Character Editor and Randomizer" --launcher Launch_FE9Randomizer=FE9Randomizer/contents.Main

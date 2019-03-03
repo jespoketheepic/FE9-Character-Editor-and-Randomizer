@@ -16,7 +16,7 @@ public class Skill implements SystemCmpContents{
     // Constructor //
     /////////////////
 
-    public Skill(String skillName, int category, String SID_name, byte[] SID_pointer) {
+    public  Skill(String skillName, int category, String SID_name, byte[] SID_pointer) {
         this.skillName = skillName;
         this.category = category;
         this.SID_name = SID_name;

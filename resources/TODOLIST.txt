@@ -1,0 +1,24 @@
+TODO:
+
+v MPID_ picker
+v Enemy boost only Str/Mag/Skl/Spd
+v Move Marcia and Jill
+v Let Ike be anything
+v Don't let people with critical skills lose them to Heron or Theif
+v Theif lockpick
+v Randomize skills (immunize critical skills)
+? Remove textures from more Laguz?
+? Ike losing his Protagonist?
+- Everyone that shows up before joining
+v Check growth boost
+- Ilyana
+v Cat
+v Textures to models
+v Shinon
+v Remove Chant from non-Herons
+? Remove single thing sages
+v Paladins
+v Lv 0
+v ch 1 weapon
+v ike starting weapon
+v Laguz royal transform

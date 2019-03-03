@@ -45,6 +45,7 @@ public class InputStreamTools {
         for (int i = 0; ; i++) {
             if ((safety = randomAccessFile.read()) == -1) {
                 throw new EOFException("File ran out!");
+
             } else {
                 // If the buffer is too small somehow
                 if (i >= buffersize) {

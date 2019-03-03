@@ -1,5 +1,8 @@
 package contents.io;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+
 public class AutoReader {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,6 +74,69 @@ public class AutoReader {
 //            e.printStackTrace();
 //            throw new RuntimeException("What are you up to with that AutoReader???");
 //        }
+
+        ////////////////////////////////////////////////////
+//        // Hardcode what we are reading here for each run //
+//        ////////////////////////////////////////////////////
+//        File source = new File("C:\\Users\\jespo\\Documents\\FE Randomizers\\PoR\\Path of Radiance editing\\system_ORIGINAL.cmp.decompressed");
+//        File dest = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\Portraits.txt");
+//        byte entrySeparator = 0x00;
+//        int sourceOffset = 0x00042D08; // 0x00015D49; //
+//        ////////////////////////////////////////////////////
+//
+//        try (BufferedInputStream sourceStream = new BufferedInputStream(new FileInputStream(source));
+//             BufferedWriter destStream = new BufferedWriter(new FileWriter(dest, true))){
+//
+//            if(sourceStream.skip(sourceOffset) != sourceOffset){
+//                throw new IOException("Failed skip?");
+//            }
+//
+//            String stringBuffer = new String(InputStreamTools.readUntilSeparator(sourceStream, entrySeparator), StandardCharsets.UTF_8);
+//            while (stringBuffer.substring(0,4).equals("FID_")){
+//                destStream.write(stringBuffer + ",000");
+//                destStream.write(Integer.toHexString(sourceOffset - 0x200).toUpperCase());
+//                sourceOffset += stringBuffer.length() + 1;
+//                destStream.write("\n");
+//
+//                stringBuffer = new String(InputStreamTools.readUntilSeparator(sourceStream, entrySeparator), StandardCharsets.UTF_8);
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("What are you up to with that AutoReader???");
+//        }
+
+        ////////////////////////////////////////////////////
+        // Hardcode what we are reading here for each run //
+        ////////////////////////////////////////////////////
+        File source = new File("C:\\Users\\jespo\\Documents\\FE Randomizers\\PoR\\Path of Radiance editing\\system_ORIGINAL_decompressed.cmp");
+        File dest = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\MPID.txt");
+        byte entrySeparator = 0x00;
+        int sourceOffset = 0x00018F4B;
+        ////////////////////////////////////////////////////
+
+        try (BufferedInputStream sourceStream = new BufferedInputStream(new FileInputStream(source));
+             BufferedWriter destStream = new BufferedWriter(new FileWriter(dest, true))){
+
+            if(sourceStream.skip(sourceOffset) != sourceOffset){
+                throw new IOException("Failed skip?");
+            }
+
+            String stringBuffer = new String(InputStreamTools.readUntilSeparator(sourceStream, entrySeparator), StandardCharsets.UTF_8);
+            while (stringBuffer.substring(0,5).equals("MPID_")){
+                destStream.write(stringBuffer + ",000");
+                destStream.write(Integer.toHexString(sourceOffset - 0x200).toUpperCase());
+                sourceOffset += stringBuffer.length() + 1;
+                destStream.write("\n");
+
+                stringBuffer = new String(InputStreamTools.readUntilSeparator(sourceStream, entrySeparator), StandardCharsets.UTF_8);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("What are you up to with that AutoReader???");
+        }
+
 
 //        ////////////////////////////////////////////////////
 //        // Hardcode what we are reading here for each run //

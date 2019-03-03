@@ -1,6 +1,7 @@
 package contents.io;
 
 import contents.datastructures.Animate;
+import contents.datastructures.MPID;
 import contents.datastructures.Portrait;
 import contents.datastructures.Skill;
 import contents.datastructures.feClass.BaseFEClass;
@@ -59,6 +60,21 @@ public class ExternalFileMapmaker {
         }
 
         return skillsMap;
+    }
+
+    // Read MPID entries from MPID.txt
+    public static LinkedHashMap<Integer, MPID> readMPIDFile() throws IOException {
+        LinkedHashMap<Integer, MPID> mpidMap = new LinkedHashMap<>();
+        List<String[]> parameterEntries = readCommaSeparatedFile("/MPID.txt", 2);
+
+        mpidMap.put(0, new MPID("(none)", new byte[]{0,0,0,0}));
+
+        for (String[] entry : parameterEntries){
+            MPID next = new MPID(entry);
+            mpidMap.put(next.getKey(), next);
+        }
+
+        return mpidMap;
     }
 
     // Read portrait entries from Portraits.txt

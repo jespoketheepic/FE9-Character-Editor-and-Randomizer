@@ -13,7 +13,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        AutoReader.readDataToFile();
+        // AutoReader.readDataToFile();
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/root.fxml"));
         primaryStage.setTitle("Jespoke's FE9 editor");
         primaryStage.setMinWidth(590);

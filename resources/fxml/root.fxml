@@ -5,13 +5,14 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="780.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="contents.gui.RootControler">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="780.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="contents.gui.RootControler">
    <children>
       <AnchorPane fx:id="findExtractedFilesPane" layoutX="20.0" layoutY="20.0" minWidth="400.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="15.0">
          <children>
@@ -94,26 +95,34 @@
                   </AnchorPane>
                   <AnchorPane layoutX="410.0" layoutY="6.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.leftAnchor="340.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
                      <children>
-                        <AnchorPane prefWidth="60.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="14.0">
+                        <AnchorPane prefWidth="60.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="24.0">
                            <children>
                               <Label layoutX="26.0" layoutY="61.0" text="Class:" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" />
-                              <Label layoutX="36.0" layoutY="71.0" text="Texture 1:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="70.0" />
-                              <Label layoutX="21.0" layoutY="154.0" text="Texture 2:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="100.0" />
+                              <Label layoutX="36.0" layoutY="71.0" text="Model 1:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="70.0" />
+                              <Label layoutX="21.0" layoutY="154.0" text="Model 2:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="100.0" />
                               <Label layoutX="41.0" layoutY="168.0" text="Portrait:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="130.0" />
-                              <Label layoutX="42.0" layoutY="251.0" text="Build:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="160.0" />
+                              <Label layoutX="42.0" layoutY="251.0" text="Build:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="190.0" />
                               <Label layoutX="16.0" layoutY="22.0" text="Level:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="10.0" />
-                              <Label layoutX="52.0" layoutY="261.0" text="Weight:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="190.0" />
+                              <Label layoutX="52.0" layoutY="261.0" text="Weight:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="220.0" />
+                              <Label layoutX="51.0" layoutY="178.0" text="Name ID:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="160.0" />
+                              <Label layoutX="62.0" layoutY="271.0" text="Start position:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="250.0" />
+                              <Label layoutX="72.0" layoutY="281.0" text="Final position:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="280.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="69.0" layoutY="-94.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="90.0" AnchorPane.topAnchor="10.0">
+                        <AnchorPane layoutX="69.0" layoutY="-94.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="90.0" AnchorPane.topAnchor="20.0">
                            <children>
-                              <Spinner fx:id="weightSpinner" layoutX="20.0" layoutY="264.0" prefWidth="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="190.0" />
-                              <Spinner fx:id="buildSpinner" layoutX="20.0" layoutY="238.0" prefWidth="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="160.0" />
+                              <Spinner fx:id="weightSpinner" layoutX="20.0" layoutY="264.0" prefWidth="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="220.0" />
+                              <Spinner fx:id="buildSpinner" layoutX="20.0" layoutY="238.0" prefWidth="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="190.0" />
                               <Spinner fx:id="levelSpinner" layoutY="14.0" prefWidth="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="10.0" />
                               <ComboBox fx:id="classComboBox" layoutX="55.0" layoutY="6.0" onAction="#classPicked" prefWidth="150.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0" />
                               <ComboBox fx:id="animation1ComboBox" prefWidth="150.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="70.0" />
                               <ComboBox fx:id="animation2ComboBox" layoutY="96.0" prefWidth="150.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="100.0" />
                               <ComboBox fx:id="portraitComboBox" layoutX="5.0" layoutY="134.0" prefWidth="150.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="130.0" />
+                              <ComboBox fx:id="MPID_ComboBox" layoutX="15.0" layoutY="144.0" prefWidth="150.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="160.0" />
+                              <Spinner fx:id="startXSpinner" layoutX="30.0" layoutY="248.0" prefWidth="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="250.0" />
+                              <Spinner fx:id="startYSpinner" layoutX="40.0" layoutY="258.0" prefWidth="60.0" AnchorPane.leftAnchor="70.0" AnchorPane.topAnchor="250.0" />
+                              <Spinner fx:id="finalXSpinner" layoutX="40.0" layoutY="258.0" prefWidth="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="280.0" />
+                              <Spinner fx:id="finalYSpinner" layoutX="50.0" layoutY="268.0" prefWidth="60.0" AnchorPane.leftAnchor="70.0" AnchorPane.topAnchor="280.0" />
                            </children>
                         </AnchorPane>
                         <Label layoutX="28.0" layoutY="-8.0" text="Misc:" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="0.0">
@@ -166,7 +175,7 @@
                         </AnchorPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane layoutX="10.0" layoutY="363.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="330.0">
+                  <AnchorPane layoutX="10.0" layoutY="363.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="390.0">
                      <children>
                         <AnchorPane fx:id="weaponsAndItemsBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
@@ -221,7 +230,7 @@
             </AnchorPane>
           <AnchorPane>
                <children>
-                  <AnchorPane layoutY="230.0" style="-fx-border-color: black; -fx-border-width: 1 0 0 0;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="85.0">
+                  <AnchorPane layoutY="230.0" style="-fx-border-color: black; -fx-border-width: 1 0 0 0;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="150.0">
                      <children>
                         <AnchorPane layoutX="-21.0" layoutY="-26.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
                            <children>
@@ -229,6 +238,7 @@
                               <CheckBox fx:id="basesCheck" layoutX="16.0" layoutY="14.0" mnemonicParsing="false" text="Bases" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="0.0" />
                               <CheckBox fx:id="classCheck" layoutX="26.0" layoutY="24.0" mnemonicParsing="false" text="Class" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="0.0" />
                               <CheckBox fx:id="growthsCheck" layoutX="26.0" layoutY="24.0" mnemonicParsing="false" text="Growths" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="30.0" />
+                              <CheckBox fx:id="skillsCheck" layoutX="100.0" layoutY="30.0" mnemonicParsing="false" text="Skills" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="30.0" />
                            </children>
                         </AnchorPane>
                         <Label layoutX="10.0" layoutY="4.0" text="Randomize:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
@@ -254,6 +264,9 @@
                            <children>
                               <Spinner fx:id="enemyGrowthSpinner" prefWidth="70.0" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="5.0" />
                               <Label text="Enemy growth &#10;increase:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="0.0" />
+                              <RadioButton fx:id="enemyGrowthRadioSMSS" layoutX="-10.0" layoutY="26.0" mnemonicParsing="false" text="Str/Mag/Skl/Spd" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="40.0" />
+                              <RadioButton fx:id="enemyGrowthRadioAll" layoutX="32.0" layoutY="32.0" mnemonicParsing="false" text="All stats" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="80.0" />
+                              <RadioButton fx:id="enemyGrowthRadioSM" layoutX="42.0" layoutY="42.0" mnemonicParsing="false" text="Str/Mag" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="60.0" />
                            </children>
                         </AnchorPane>
                         <Label fx:id="globalSupportLabel" layoutX="65.0" layoutY="2.0" text="[?]" textFill="#2a35cf" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="0.0">

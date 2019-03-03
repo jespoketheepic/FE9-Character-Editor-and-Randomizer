@@ -16,6 +16,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -32,6 +33,8 @@ import java.util.stream.Collectors;
 
 public class RootControler {
 
+    private static final int[][] enemyGrowthOptions = new int[][]{{1,2,3,4},{1,2},{0,1,2,3,4,5,6,7}};
+
     @SuppressWarnings("Duplicates")
     public void initialize() {
         // Assign Tooltips
@@ -45,8 +48,10 @@ public class RootControler {
         Tooltip.install(weaponRankSupportLabel, new QuickLongTooltip("Note that what weapons you can use is dictated by the class, not the weapon rank."));
         Tooltip.install(skillsSupportLabel, new QuickLongTooltip("A unit can currently not start with more skills than they have in the Vanilla game.\n" +
                 "Skills you probably shouldn't mess with are marked with CAPITAL LETTERS"));
-        Tooltip.install(animSupportLabel, new QuickLongTooltip("Anim 1 is used when unpromoted/untransformed, and Anim2 is used when promoted/transformed.\n" +
-                "Some characters work fine without any Anim, and some ONLY work no Anim."));
+        Tooltip.install(animSupportLabel, new QuickLongTooltip("Model 1 is used when unpromoted/untransformed, and Model 2 is used when promoted/transformed.\n" +
+                "Some characters work fine without any specifically assigned Model, and some ONLY work no Model assigned.\n" +
+                "Position is given as (X horizontal from left, Y vertical from top) coordinates from the origin of the map, which may lie outside the playable area.\n" +
+                "Note this editor has no safety in place to ensure the position coordinates are valid."));
         Tooltip.install(globalSupportLabel, new QuickLongTooltip("Global changes are applied when you Save and Quit."));
         Tooltip.install(randomizeSupportLabel, new QuickLongTooltip("The randomizing is still pretty weird. Notes:\n" +
                 "Two logs are created in the directory containing your root folder. One with everthing changed, and one for avoiding spoilers with only the growths\n" +
@@ -60,6 +65,7 @@ public class RootControler {
         NamedObjectCellFactory.applyToComboBox(skill1ComboBox);
         NamedObjectCellFactory.applyToComboBox(skill2ComboBox);
         NamedObjectCellFactory.applyToComboBox(skill3ComboBox);
+        NamedObjectCellFactory.applyToComboBox(MPID_ComboBox);
         NamedObjectCellFactory.applyToComboBox(portraitComboBox);
         NamedObjectCellFactory.applyToComboBox(animation1ComboBox);
         NamedObjectCellFactory.applyToComboBox(animation2ComboBox);
@@ -72,13 +78,21 @@ public class RootControler {
         NamedObjectCellFactory.applyToComboBox(item3ComboBox);
         NamedObjectCellFactory.applyToComboBox(item4ComboBox);
 
+        // Radio buttons
+        enemyGrowthTypeRadioGroup = new ToggleGroup();
+        enemyGrowthRadioSMSS.setToggleGroup(enemyGrowthTypeRadioGroup);
+        enemyGrowthRadioSM.setToggleGroup(enemyGrowthTypeRadioGroup);
+        enemyGrowthRadioAll.setToggleGroup(enemyGrowthTypeRadioGroup);
+        enemyGrowthRadioSMSS.setUserData(0);
+        enemyGrowthRadioSM.setUserData(1);
+        enemyGrowthRadioAll.setUserData(2);
+        enemyGrowthRadioSMSS.setSelected(true);
+
         // Spinners
         basesSpinners = List.of(hpSpinner, strSpinner, magSpinner, sklSpinner, spdSpinner, lckSpinner, defSpinner, resSpinner);
         growthsSpinners = List.of(hpGrowthSpinner, strGrowthSpinner, magGrowthSpinner, sklGrowthSpinner, spdGrowthSpinner, lckGrowthSpinner, defGrowthSpinner, resGrowthSpinner);
         weaponRankSpinners = List.of(swordSpinner, lanceSpinner, axeSpinner, bowSpinner, fireSpinner, thunderSpinner, windSpinner, staffSpinner);
         setValueFactories();
-
-
     }
 
     /////////////////
@@ -183,9 +197,19 @@ public class RootControler {
     @FXML
     private ComboBox<Portrait> portraitComboBox;
     @FXML
+    private ComboBox<MPID> MPID_ComboBox;
+    @FXML
     private Spinner<Integer> buildSpinner;
     @FXML
     private Spinner<Integer> weightSpinner;
+    @FXML
+    private Spinner<Integer> startXSpinner;
+    @FXML
+    private Spinner<Integer> startYSpinner;
+    @FXML
+    private Spinner<Integer> finalXSpinner;
+    @FXML
+    private Spinner<Integer> finalYSpinner;
 
     // Skills
     @FXML
@@ -222,6 +246,12 @@ public class RootControler {
     private Label globalSupportLabel;
     @FXML
     private Spinner<Integer> enemyGrowthSpinner;
+    @FXML
+    private RadioButton enemyGrowthRadioSMSS;
+    @FXML
+    private RadioButton enemyGrowthRadioSM;
+    @FXML
+    private RadioButton enemyGrowthRadioAll;
 
     // Randomize
     @FXML
@@ -232,6 +262,8 @@ public class RootControler {
     private CheckBox growthsCheck;
     @FXML
     private CheckBox classCheck;
+    @FXML
+    private CheckBox skillsCheck;
     @FXML
     private Button randomizeSaveAndQuitButton;
 
@@ -246,6 +278,7 @@ public class RootControler {
     private LinkedHashMap<String, CharacterEntry> characterEntryMap;
     private Map<String, DisposEntry> disposEntryMap;
     private Map<Integer, Skill> skillsMap;
+    private Map<Integer, MPID> mpidMap;
     private Map<Integer, Portrait> portraitsMap;
     private Map<Integer, Animate> animationMap;
     private Map<Integer, FEClass> feClassMap;
@@ -258,10 +291,13 @@ public class RootControler {
     private CharacterEntry currentlySelectedCharacter;
     private DisposEntry currentlySelectedDispos;
     private int oldEnemyGrowth;
+    private int oldEnemyGrowthType;
 
     private List<Spinner<Integer>> basesSpinners;
     private List<Spinner<Integer>> growthsSpinners;
     private List<Spinner<Character>> weaponRankSpinners;
+
+    private ToggleGroup enemyGrowthTypeRadioGroup;
 
     private DisposIO disposIO;
 
@@ -354,6 +390,12 @@ public class RootControler {
                         throw new RuntimeException("Exception reading Skills.txt");
                     }
                     try{
+                        mpidMap = ExternalFileMapmaker.readMPIDFile();
+                    } catch (IOException e){
+                        e.printStackTrace();
+                        throw new RuntimeException("Exception reading MPID.txt");
+                    }
+                    try{
                         portraitsMap = ExternalFileMapmaker.readPortraitFile();
                     } catch (IOException e){
                         e.printStackTrace();
@@ -387,6 +429,7 @@ public class RootControler {
                     skill1ComboBox.setItems(FXCollections.observableArrayList(skillsMap.values()).sorted(Comparator.comparing(Skill::getDisplayName)));
                     skill2ComboBox.setItems(FXCollections.observableArrayList(skillsMap.values()).sorted(Comparator.comparing(Skill::getDisplayName)));
                     skill3ComboBox.setItems(FXCollections.observableArrayList(skillsMap.values()).sorted(Comparator.comparing(Skill::getDisplayName)));
+                    MPID_ComboBox.setItems(FXCollections.observableArrayList(mpidMap.values()).sorted(Comparator.comparing(MPID::getDisplayName)));
                     portraitComboBox.setItems(FXCollections.observableArrayList(portraitsMap.values()).sorted(Comparator.comparing(Portrait::getDisplayName)));
                     classComboBox.setItems(FXCollections.observableArrayList(feClassMap.values()).sorted(Comparator.comparing(FEClass::getDisplayName)));
                     animation1ComboBox.setItems(FXCollections.observableArrayList(animationMap.values()).sorted(Comparator.comparing(Animate::getDisplayName)));
@@ -407,7 +450,21 @@ public class RootControler {
 
                     // Global (Enemy growth)
                     try {
-                        oldEnemyGrowth = SystemIO.readGrowthIncrease(rootDirectory);
+                        int[] buffer = SystemIO.readGrowthIncrease(rootDirectory);
+                        // Growth increase type
+                        oldEnemyGrowthType = buffer[0];
+                        switch (oldEnemyGrowthType){
+                            case 0: // SMSS
+                                enemyGrowthRadioSMSS.fire();
+                                break;
+                            case 1: // SM
+                                enemyGrowthRadioSM.fire();
+                                break;
+                            case 2: // All
+                                enemyGrowthRadioAll.fire();
+                                break;
+                        }
+                        oldEnemyGrowth = buffer[1];
                         enemyGrowthSpinner.getValueFactory().setValue(oldEnemyGrowth);
                     } catch (IOException e){
                         e.printStackTrace();
@@ -470,6 +527,9 @@ public class RootControler {
         skill3ComboBox.setValue(skillsMap.get(ByteMath.bytesToInt(currentlySelectedCharacter.getSkill3_pointer())));
         disableComboBoxOnNullID(skill3ComboBox, "(none)");
 
+        // MPID
+        MPID_ComboBox.setValue(mpidMap.get(ByteMath.bytesToInt(currentlySelectedCharacter.getMPID_pointer())));
+
         // Portrait
         portraitComboBox.setValue(portraitsMap.get(ByteMath.bytesToInt(currentlySelectedCharacter.getPortrait_pointer())));
 
@@ -500,6 +560,12 @@ public class RootControler {
             disableComboBoxOnNullID(item3ComboBox, "IID_NULL");
             item4ComboBox.setValue(itemsMap.get(currentlySelectedDispos.getItem4_IID_name()));
             disableComboBoxOnNullID(item4ComboBox, "IID_NULL");
+            // Location
+            byte[] coordinates = currentlySelectedDispos.getCoordinates();
+            startXSpinner.getValueFactory().setValue((int)coordinates[0]);
+            startYSpinner.getValueFactory().setValue((int)coordinates[1]);
+            finalXSpinner.getValueFactory().setValue((int)coordinates[2]);
+            finalYSpinner.getValueFactory().setValue((int)coordinates[3]);
         }
     }
 
@@ -544,6 +610,7 @@ public class RootControler {
         currentlySelectedCharacter.setAnimation1_pointer(animation1ComboBox.getValue().getAID_pointer());
         currentlySelectedCharacter.setAnimation2_pointer(animation2ComboBox.getValue().getAID_pointer());
         currentlySelectedCharacter.setPortrait_pointer(portraitComboBox.getValue().getFID_pointer());
+        currentlySelectedCharacter.setMPID_pointer(MPID_ComboBox.getValue().getID_pointer());
 
         // Skills
         //bubbleUpComboBoxValues(skillsMap.get(0), skill1ComboBox, skill2ComboBox, skill3ComboBox);
@@ -576,31 +643,60 @@ public class RootControler {
         currentlySelectedDispos.setItem2_IID_name(item2ComboBox.getValue().getIID_name());
         currentlySelectedDispos.setItem3_IID_name(item3ComboBox.getValue().getIID_name());
         currentlySelectedDispos.setItem4_IID_name(item4ComboBox.getValue().getIID_name());
+
+        // Position
+        currentlySelectedDispos.setCoordinates(startXSpinner.getValue(), startYSpinner.getValue(),finalXSpinner.getValue(),finalYSpinner.getValue());
     }
 
     @FXML
     private void saveChanges(){
-
         // Apply enemy growths
-        if (enemyGrowthSpinner.getValue() != oldEnemyGrowth){
-            for (CharacterEntry entry : characterEntryMap.values()){
-                // We only load disposentries for playable characters, so they can be used to filter for enemies
-                if (disposEntryMap.get(entry.getPID_name()) == null){
-                    byte[] growths = entry.getGrowths();
+        if (enemyGrowthSpinner.getValue() != oldEnemyGrowth || (Integer) enemyGrowthTypeRadioGroup.getSelectedToggle().getUserData() != oldEnemyGrowthType){
+            try {
+                ArrayList<ClassGrowths> classGrowthsList = SystemIO.readClassGrowths(rootDirectory);
 
-                    // We apply the increase to each growth
-                    for (int i = 0; i < 8; i++){
-                        growths[i] = (byte)(growths[i] - oldEnemyGrowth + enemyGrowthSpinner.getValue());
+                for (ClassGrowths classGrowths : classGrowthsList){
+
+                    // Undo old changes
+                    switch (oldEnemyGrowthType) {
+                        case 0: // SMSS
+                            classGrowths.massEdit_StrMagSklSpd(-oldEnemyGrowth);
+                            break;
+                        case 1: // SM
+                            classGrowths.massEdit_StrMag(-oldEnemyGrowth);
+                            break;
+                        case 2: // All
+                            classGrowths.massEdit_All(-oldEnemyGrowth);
+                            break;
+                    }
+
+                    // Apply the new
+                    switch ((Integer) enemyGrowthTypeRadioGroup.getSelectedToggle().getUserData()) {
+                        case 0: // SMSS
+                            classGrowths.massEdit_StrMagSklSpd(enemyGrowthSpinner.getValue());
+                            break;
+                        case 1: // SM
+                            classGrowths.massEdit_StrMag(enemyGrowthSpinner.getValue());
+                            break;
+                        case 2: // All
+                            classGrowths.massEdit_All(enemyGrowthSpinner.getValue());
+                            break;
                     }
 
                     // Write the new growth value to the file so we can find it again next time.
-                    try {
-                        SystemIO.writeGrowthIncrease(rootDirectory, enemyGrowthSpinner.getValue());
-                    } catch (IOException e){
-                        e.printStackTrace();
-                        throw new RuntimeException("The enemy growth.");
+                    if (enemyGrowthTypeRadioGroup.getSelectedToggle().getUserData() instanceof Integer){
+                        SystemIO.writeGrowthIncrease(rootDirectory, (Integer) enemyGrowthTypeRadioGroup.getSelectedToggle().getUserData(), enemyGrowthSpinner.getValue());
+                    } else {
+                        throw new RuntimeException("Radiobuttons messed up?");
                     }
                 }
+
+                // Apply the new class growths
+                SystemIO.writeClassGrowths(rootDirectory, classGrowthsList);
+
+            } catch (IOException e){
+                e.printStackTrace();
+                throw new RuntimeException("The enemy growth.");
             }
         }
 
@@ -619,6 +715,12 @@ public class RootControler {
 
     @FXML
     private void randomizeSaveAndQuit() throws IOException{
+        // Setup
+        Randomize.updateAvailableSkills(skillsMap.values());
+        SystemIO.eliminateBlessedArmor(rootDirectory);
+        SystemIO.paladins(rootDirectory);
+        SystemIO.ch1ItemScriptStuff(rootDirectory);
+
         // Logging
         BufferedWriter fullLog = new BufferedWriter(new FileWriter(rootDirectory + File.separator + "../" + File.separator + "FE9 Randomized Full Log.txt"));
         BufferedWriter growthsLog = new BufferedWriter(new FileWriter(rootDirectory + File.separator + "../" + File.separator + "FE9 Randomized Growths Only Log.txt"));
@@ -636,21 +738,7 @@ public class RootControler {
 
             // Class. Must be first because the others base decisions on it.
             if (classCheck.isSelected()){
-                // Ike special case
-                if(entry.getPID_name().equals("PID_IKE")){
-                    Map<Integer, FEClass> ikeClasses = new HashMap<>();
-                    ikeClasses.put(0x00016B57, feClassMap.get(0x00016B57)); // Dracoknight
-                    ikeClasses.put(0x00016D7D, feClassMap.get(0x00016D7D)); // Pegasusknight
-                    ikeClasses.put(0x00016DA9, feClassMap.get(0x00016DA9)); // Ranger, for the prev class stuff
-
-                    // This is indiscribably bad coding style, but oh god please let it just be temporary :( // TODO: Fix this monster
-                    while(ByteMath.bytesToInt(entry.getClass_pointer()) == 0x00016DA9) {
-                        Randomize.randomizeClass(entry, disposEntryMap.get(entry.getPID_name()), ikeClasses, weaponsMap);
-                    }
-                } else {
-                    // Everyone else
-                    Randomize.randomizeClass(entry, disposEntryMap.get(entry.getPID_name()), feClassMap, weaponsMap);
-                }
+                Randomize.randomizeClass(entry, disposEntryMap.get(entry.getPID_name()), feClassMap, weaponsMap);
 
                 // Log class
                 try {
@@ -659,9 +747,6 @@ public class RootControler {
                     e.printStackTrace();
                     System.out.println("Log failed a write. Whatever.");
                 }
-
-                // Save the Vague Katti
-                disposEntryMap.get("PID_TOPUCK").setWeapon1_IID_name("IID_WATOU");
             }
 
             // Stat labels, if either type of stats is random
@@ -691,7 +776,7 @@ public class RootControler {
                     // Fill the boxes with growths by the digit
                     for(int i = 0; i < 8; i++){
                         sb.setCharAt(7*i + 4, String.valueOf(bases[i] % 10).charAt(0));
-                        sb.setCharAt(7*i + 3, String.valueOf((bases[i]/10) % 10).charAt(0));
+                        sb.setCharAt(7*i + 3, (String.valueOf((bases[i]/10) % 10).charAt(0) == 0) ? ' ' : String.valueOf((bases[i]/10) % 10).charAt(0));
                     }
 
                     // Write it
@@ -716,7 +801,7 @@ public class RootControler {
                     for(int i = 0; i < 8; i++){
                         sb.setCharAt(7*i + 4, String.valueOf(growths[i] % 10).charAt(0));
                         sb.setCharAt(7*i + 3, String.valueOf((growths[i]/10) % 10).charAt(0));
-                        sb.setCharAt(7*i + 2, String.valueOf((growths[i]/100) % 10).charAt(0));
+                        sb.setCharAt(7*i + 2, (String.valueOf((growths[i]/100) % 10).charAt(0) == 0) ? ' ' : String.valueOf((growths[i]/100) % 10).charAt(0));
                     }
 
                     // Write it
@@ -727,7 +812,20 @@ public class RootControler {
                     System.out.println("Log failed a write. Whatever.");
                 }
             }
+
+            // Skills
+            if(skillsCheck.isSelected()){
+                Randomize.randomizeSkills(entry);
+            }
         });
+
+        // Misc things that are not by character
+        // Save the Vague Katti
+        disposEntryMap.get("PID_TOPUCK").setWeapon1_IID_name("IID_WATOU");
+        // Move Marcia
+        disposEntryMap.get("PID_MARCIA").setCoordinates(23, 2, 23, 9);
+        // Move Jill
+        disposEntryMap.get("PID_JILL").setCoordinates(14, 13, 15, 11);
 
         fullLog.close();
         growthsLog.close();
@@ -777,11 +875,17 @@ public class RootControler {
         }
 
         // Level
-        levelSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 20));
+        levelSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 20));
 
         // Build and Weight
         buildSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-20, 20));
         weightSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-50, 50));
+
+        // Location
+        startXSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255));
+        startYSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255));
+        finalXSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255));
+        finalYSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255));
 
         // Global
         enemyGrowthSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0, 5));

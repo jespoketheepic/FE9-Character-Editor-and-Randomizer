@@ -33,6 +33,15 @@ public class DisposIO {
             disposFile = new DisposFile(disposTxtLine, rootDirectory);
             disposFileList.add(disposFile);
             for (DisposEntry entry : disposFile.getEntries()){
+
+                // check for earlier entries of this character. If they exist, make them subentries of this one
+                DisposEntry prev = disposMap.get(entry.getPID_name());
+                if(prev != null){
+                    entry.setSubEntries(prev);
+                }
+
+                // This will *replace* entries that are duplicate keys from previous files, and that is very much intentional!
+                // This way, the only editable entry for a character is the last one, which passes the variables that need to be synced to its subentries (the earlier ones)
                 disposMap.put(entry.getPID_name(), entry);
             }
         }
@@ -48,6 +57,7 @@ public class DisposIO {
             int currentEnd = disposFile.getLength();
 
             for(DisposEntry entry : disposFile.getEntries()){
+
                 disposCmp.seek(currentEnd);
                 disposCmp.write(entry.getJID_name().getBytes(StandardCharsets.UTF_8));
                 disposCmp.write(0x00);

@@ -22,3 +22,8 @@ v Lv 0
 v ch 1 weapon
 v ike starting weapon
 v Laguz royal transform
+- Ike beat prologue
+v Skills?
+- Protagonist, again
+- Skills, banned bypass
+- Mist hates Models

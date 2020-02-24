@@ -34,6 +34,7 @@ public class ClassGrowths {
                     break;
                 case 0:
                     growths[i] += edit;
+                    break;
             }
         }
     }
@@ -49,6 +50,7 @@ public class ClassGrowths {
                     break;
                 case 0:
                     growths[i] += edit;
+                    break;
             }
         }
     }
@@ -64,6 +66,7 @@ public class ClassGrowths {
                     break;
                 case 0:
                     growths[i] += edit;
+                    break;
             }
         }
     }

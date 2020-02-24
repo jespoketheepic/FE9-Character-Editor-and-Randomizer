@@ -10,6 +10,7 @@ import contents.datastructures.inventory.Weapon;
 import contents.gui.RootControler;
 import contents.io.SVar;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +20,17 @@ import java.util.stream.Collectors;
 public class Randomize {
 
     public static void randomizeClass(CharacterEntry entry, DisposEntry disposEntry, Map<Integer, FEClass> feClassMap, Map<String, Weapon> weaponMap){
-        FEClass feClass = feClassMap.get(ByteMath.bytesToInt(entry.getClass_pointer()));
+        FEClass feClass;
         int effectiveLevel;
 
         do {
+            feClass = feClassMap.get(ByteMath.bytesToInt(entry.getClass_pointer()));
+
             // Promoted or not?
             if (feClass.isLaguz()) {
                 // Laguz case
                 effectiveLevel = entry.getLevel() * 2;
-                if (entry.getLevel() <= 10) {
+                if (effectiveLevel <= 20) {
                     // Base case
                     feClass = randomClass(feClassMap, false);
                 } else {
@@ -198,29 +201,47 @@ public class Randomize {
     @SuppressWarnings("Duplicates")
     // Randomize growths
     public static void randomizeGrowths(CharacterEntry entry, Map<String, Weapon> weaponsMap, Map<Integer, FEClass> feClassMap){
-        byte[] growths = entry.getGrowths();
-        double[] weights = new double[8];
-        int total = 0;
-        double weightTotal = 0;
-        int spent = 0;
+        boolean failure;
+        byte[] growths;
+        do {
+            failure = false;
+            growths = entry.getGrowths();
+            double[] weights = new double[8];
+            int total = 0;
+            double weightTotal = 0;
+            int spent = 0;
 
-        // Tally up the growths and randomize weights
-        for(int i = 0; i < 8; i++){
-            total += growths[i];
-            weights[i] = Math.random();
-            weightTotal += weights[i];
-        }
-        // Put aside points for luck
-        total -= 4;
+            // Tally up the growths and randomize weights
+            for (int i = 0; i < 8; i++) {
+                total += ByteMath.unsignedByteToInt(growths[i]);
+                weights[i] = Math.random();
+                weightTotal += weights[i];
+            }
 
-        // Spread the goods
-        for (int i = 0; i < 8; i++){
-            growths[i] = (byte)(Math.floor((weights[i]*total)/(weightTotal*5))*5);
-            spent += growths[i];
-        }
+            // Spread the goods
+            for (int i = 0; i < 8; i++) {
+                int buffer = (int) Math.floor((weights[i] * total) / (weightTotal * 5)) * 5;
 
-        // Remainder dumped in HP
-        growths[0] += total-spent;
+                // Check for overflow
+                if (buffer > 255) {
+                    failure = true;
+                    break;
+                } else {
+                    growths[i] = (byte) buffer;
+                    spent += growths[i];
+                }
+
+            }
+
+            // Remainder dumped in HP
+            if (growths[0] + total - spent > 255){
+                failure = true;
+            } else {
+                growths[0] += (total - spent);
+            }
+
+            // Reroll on overflow
+        } while (failure);
 
         // Swap Str and Mag if they don't match the weapon
         // It is real simple, my data structure is just not set up for it
@@ -257,19 +278,20 @@ public class Randomize {
 
     // Randomize the skills that we can do that to
     public static void randomizeSkills(CharacterEntry entry){
-        int skill = ByteMath.bytesToInt(entry.getSkill1_pointer());
-        if (skill != 0 && !isImmutableSkill(skill) && isClassConnectedSkill(skill)){
-            entry.setSkill1_pointer(randomSkill().getSID_pointer());
+        int skill = Skill.unregionalize_Pointer(ByteMath.bytesToInt(entry.getSkill1_pointer()));
+        if (skill != 0 && !isImmutableSkill(skill) && !isClassConnectedSkill(skill)){
+
+            entry.setSkill1_pointer(randomSkill());
         }
 
         skill = ByteMath.bytesToInt(entry.getSkill2_pointer());
-        if (skill != 0 && !isImmutableSkill(skill) && isClassConnectedSkill(skill)){
-            entry.setSkill1_pointer(randomSkill().getSID_pointer());
+        if (skill != 0 && !isImmutableSkill(skill) && !isClassConnectedSkill(skill)){
+            entry.setSkill1_pointer(randomSkill());
         }
 
         skill = ByteMath.bytesToInt(entry.getSkill3_pointer());
-        if (skill != 0 && !isImmutableSkill(skill) && isClassConnectedSkill(skill)){
-            entry.setSkill3_pointer(randomSkill().getSID_pointer());
+        if (skill != 0 && !isImmutableSkill(skill) && !isClassConnectedSkill(skill)){
+            entry.setSkill3_pointer(randomSkill());
         }
     }
 
@@ -310,11 +332,11 @@ public class Randomize {
         } else {
             // Non-herons random roll away Chant
             if (ByteMath.bytesToInt(entry.getSkill1_pointer()) == 0x0001BB0E){
-                entry.setSkill1_pointer(randomSkill().getSID_pointer());
+                entry.setSkill1_pointer(randomSkill());
             } else if (ByteMath.bytesToInt(entry.getSkill2_pointer()) == 0x0001BB0E){
-                entry.setSkill2_pointer(randomSkill().getSID_pointer());
+                entry.setSkill2_pointer(randomSkill());
             } else if (ByteMath.bytesToInt(entry.getSkill3_pointer()) == 0x0001BB0E){
-                entry.setSkill3_pointer(randomSkill().getSID_pointer());
+                entry.setSkill3_pointer(randomSkill());
             }
         }
 
@@ -326,16 +348,28 @@ public class Randomize {
         } else {
             // Non-theives random roll away Lockpick
             if (ByteMath.bytesToInt(entry.getSkill1_pointer()) == 0x0001BD6F){
-                entry.setSkill1_pointer(randomSkill().getSID_pointer());
+                entry.setSkill1_pointer(randomSkill());
             } else if (ByteMath.bytesToInt(entry.getSkill2_pointer()) == 0x0001BD6F){
-                entry.setSkill2_pointer(randomSkill().getSID_pointer());
+                entry.setSkill2_pointer(randomSkill());
             } else if (ByteMath.bytesToInt(entry.getSkill3_pointer()) == 0x0001BD6F){
-                entry.setSkill3_pointer(randomSkill().getSID_pointer());
+                entry.setSkill3_pointer(randomSkill());
             }
         }
 
         // Shinon: His recruitment loses his weapon, which breaks laguz
-        if(entry.getPID_name().equals("PID_CHINON") && feClass.isLaguz()){
+        // Gatrie: Actually giving Gatrie his proper weapon is probably doable in the Scripts file, but i don't have the time/motivation to explore it now.
+        if((entry.getPID_name().equals("PID_CHINON") || entry.getPID_name().equals("PID_GATRIE")) && feClass.isLaguz()){
+            return false;
+        }
+
+        // Ike: He needs to beat the prologue
+        if(entry.getPID_name().equals("PID_IKE") && (
+                feClass.getJID_name().equals("JID_PRIEST") ||
+                        feClass.getJID_name().equals("JID_PRIEST/F") ||
+                        feClass.getJID_name().equals("JID_CLERIC/F") ||
+                        feClass.getJID_name().equals("JID_BIRD_HE_W/F") ||
+                        feClass.getJID_name().equals("JID_BIRD_HE_W")
+        )){
             return false;
         }
 
@@ -389,13 +423,13 @@ public class Randomize {
         availableSkills = skills.stream().filter(s -> (s.getCategory() < 3)).collect(Collectors.toList());
     }
 
-    private static Skill randomSkill(){
+    private static byte[] randomSkill(){
         if (availableSkills == null){
             throw new IllegalStateException("Availableskills was never set");
         }
 
         int rn = (int)(Math.random() * availableSkills.size());
 
-        return availableSkills.get(rn);
+        return availableSkills.get(rn).getSID_pointer();
     }
 }

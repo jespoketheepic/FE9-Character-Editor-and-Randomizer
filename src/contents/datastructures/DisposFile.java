@@ -32,8 +32,17 @@ public class DisposFile {
         length = Integer.parseInt(parameterIterator.next(), 16);
         header = Integer.parseInt(parameterIterator.next(), 16);
 
-        // Decompress
-        Compressor.decompressLZ77(filePath);
+        // Special check for Ilyana's sake
+        InputStream packtest = new FileInputStream(filePath);
+        if(packtest.read() != 'p' || packtest.read() != 'a' || packtest.read() != 'c' || packtest.read() != 'k'){
+            packtest.close();
+
+            // Decompress
+            Compressor.decompressLZ77(filePath);
+        } else {
+            packtest.close();
+        }
+
         RandomAccessFile disposCmpRandomAccessRead = new RandomAccessFile(filePath, "r");
 
         String PID_name_buffer;

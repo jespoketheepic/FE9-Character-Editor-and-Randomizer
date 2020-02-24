@@ -14,6 +14,8 @@ import contents.gui.components.NamedObjectCellFactory;
 import contents.gui.components.QuickLongTooltip;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -58,6 +60,8 @@ public class RootControler {
                 "Ike is guaranteed to be a flyer so he can recruit Marcia and Jill.\n" +
                 "The last weapon in each character's inventory is replaced with an Iron weapon they can use.\n" +
                 "The Vague Katti is saved from becoming an Iron weapon by putting it in Tormod's inventory."));
+        Tooltip.install(ch1HouseSupportLabel, new QuickLongTooltip("The item in the first house in ch 1.\n" +
+                " Limited to items whose IID can fit in the space left by the original \"IID_STEELSWORD\"."));
 
         // Set custom cellfactory to comboboxes
         NamedObjectCellFactory.applyToComboBox(characterComboBox);
@@ -77,6 +81,7 @@ public class RootControler {
         NamedObjectCellFactory.applyToComboBox(item2ComboBox);
         NamedObjectCellFactory.applyToComboBox(item3ComboBox);
         NamedObjectCellFactory.applyToComboBox(item4ComboBox);
+        NamedObjectCellFactory.applyToComboBox(ch1ItemComboBox);
 
         // Radio buttons
         enemyGrowthTypeRadioGroup = new ToggleGroup();
@@ -267,6 +272,14 @@ public class RootControler {
     @FXML
     private Button randomizeSaveAndQuitButton;
 
+    // Don't Randomize
+    @FXML
+    private Label ch1HouseSupportLabel;
+    @FXML
+    private ComboBox<Inventory> ch1ItemComboBox;
+    @FXML
+    private Button dontRandomizeSaveAndQuitButton;
+
 
     ////////////
     // Fields //
@@ -282,8 +295,11 @@ public class RootControler {
     private Map<Integer, Portrait> portraitsMap;
     private Map<Integer, Animate> animationMap;
     private Map<Integer, FEClass> feClassMap;
+
+    private List<Inventory> inventoryList;
     private Map<String, Weapon> weaponsMap;
     private Map<String, Item> itemsMap;
+
     private Map<Integer, BaseFEClass> baseFEClassMap;
     private Map<Integer, PromotedFEClass> promotedFEClassMap;
     private Map<Integer, LaguzFEClass> laguzFEClassMap;
@@ -408,7 +424,7 @@ public class RootControler {
                         throw new RuntimeException("Exception reading Animations.txt");
                     }
                     try{
-                        List<Inventory> inventoryList = ExternalFileMapmaker.readInventoryFile();
+                        inventoryList = ExternalFileMapmaker.readInventoryFile();
                         weaponsMap = inventoryList.stream().filter(entry -> entry instanceof Weapon).map(entry -> (Weapon) entry).collect(Collectors.toMap(Weapon::getKey, entry -> entry));
                         itemsMap = inventoryList.stream().filter(entry -> entry instanceof Item).map(entry -> (Item) entry).collect(Collectors.toMap(Item::getKey, entry -> entry));
                     } catch (IOException e){
@@ -424,6 +440,19 @@ public class RootControler {
                         e.printStackTrace();
                         throw new RuntimeException("Exception reading Class.txt");
                     }
+                    try {
+                        // The chapter 1 house
+                        ObservableList<Inventory> observeInventory = FXCollections.observableArrayList(inventoryList).filtered(entry -> entry.getIID_name().length() <= 0x0E).sorted(Comparator.comparing(Inventory::getName));
+                        if (observeInventory.isEmpty()){
+                            throw new RuntimeException("No items to put in house?");
+                        }
+                        ch1ItemComboBox.setItems(observeInventory);
+                        String houseContents = new String(SystemIO.readCh1HouseItem(rootDirectory));
+                        ch1ItemComboBox.setValue(observeInventory.filtered(entry -> entry.getIID_name().equals(houseContents)).get(0));
+                    } catch (IOException e){
+                        throw new RuntimeException(e);
+                    }
+
 
                     // ComboBox contents
                     skill1ComboBox.setItems(FXCollections.observableArrayList(skillsMap.values()).sorted(Comparator.comparing(Skill::getDisplayName)));
@@ -653,9 +682,16 @@ public class RootControler {
         // Apply enemy growths
         if (enemyGrowthSpinner.getValue() != oldEnemyGrowth || (Integer) enemyGrowthTypeRadioGroup.getSelectedToggle().getUserData() != oldEnemyGrowthType){
             try {
-                ArrayList<ClassGrowths> classGrowthsList = SystemIO.readClassGrowths(rootDirectory);
+                ArrayList<ClassGrowths> classGrowthsList;
 
-                for (ClassGrowths classGrowths : classGrowthsList){
+                if (enemyGrowthSpinner.getValue() == 0){
+                    classGrowthsList = SystemIO.resetClassGrowths();
+                    oldEnemyGrowth = 0;
+                } else {
+                    classGrowthsList = SystemIO.readClassGrowths(rootDirectory);
+                }
+
+                for (ClassGrowths classGrowths : classGrowthsList) {
 
                     // Undo old changes
                     switch (oldEnemyGrowthType) {
@@ -682,13 +718,13 @@ public class RootControler {
                             classGrowths.massEdit_All(enemyGrowthSpinner.getValue());
                             break;
                     }
+                }
 
-                    // Write the new growth value to the file so we can find it again next time.
-                    if (enemyGrowthTypeRadioGroup.getSelectedToggle().getUserData() instanceof Integer){
-                        SystemIO.writeGrowthIncrease(rootDirectory, (Integer) enemyGrowthTypeRadioGroup.getSelectedToggle().getUserData(), enemyGrowthSpinner.getValue());
-                    } else {
-                        throw new RuntimeException("Radiobuttons messed up?");
-                    }
+                // Write the new growth value to the file so we can find it again next time.
+                if (enemyGrowthTypeRadioGroup.getSelectedToggle().getUserData() instanceof Integer){
+                    SystemIO.writeGrowthIncrease(rootDirectory, (Integer) enemyGrowthTypeRadioGroup.getSelectedToggle().getUserData(), enemyGrowthSpinner.getValue());
+                } else {
+                    throw new RuntimeException("Radiobuttons messed up?");
                 }
 
                 // Apply the new class growths
@@ -720,6 +756,8 @@ public class RootControler {
         SystemIO.eliminateBlessedArmor(rootDirectory);
         SystemIO.paladins(rootDirectory);
         SystemIO.ch1ItemScriptStuff(rootDirectory);
+        SystemIO.promoteRangerAndTheif(rootDirectory);
+        SystemIO.laguzRoyalsPreventDepromote(rootDirectory);
 
         // Logging
         BufferedWriter fullLog = new BufferedWriter(new FileWriter(rootDirectory + File.separator + "../" + File.separator + "FE9 Randomized Full Log.txt"));
@@ -816,10 +854,41 @@ public class RootControler {
             // Skills
             if(skillsCheck.isSelected()){
                 Randomize.randomizeSkills(entry);
+
+                // Log Skills
+                try {
+                    fullLog.write("Skills: ");
+                    if (ByteMath.bytesToInt(entry.getSkill1_pointer()) != 0) {
+                        fullLog.write(skillsMap.get(ByteMath.bytesToInt(entry.getSkill1_pointer())).getDisplayName());
+                    }
+
+                    if (ByteMath.bytesToInt(entry.getSkill2_pointer()) != 0) {
+                        fullLog.write(skillsMap.get(ByteMath.bytesToInt(entry.getSkill2_pointer())).getDisplayName());
+                    }
+
+                    if (ByteMath.bytesToInt(entry.getSkill3_pointer()) != 0) {
+                        fullLog.write(skillsMap.get(ByteMath.bytesToInt(entry.getSkill3_pointer())).getDisplayName());
+                    }
+
+                    fullLog.write(System.lineSeparator());
+                } catch (IOException e){
+                    e.printStackTrace();
+                    System.out.println("Log failed a write. Whatever.");
+                }
             }
+
+            try {
+                fullLog.write(System.lineSeparator());
+            } catch (IOException e){
+                e.printStackTrace();
+                System.out.println("Log failed a write. Whatever.");
+            }
+
         });
 
         // Misc things that are not by character
+        // Ch 1 house
+        SystemIO.writeCh1HouseItem(rootDirectory, "IID_STEELLANCE");
         // Save the Vague Katti
         disposEntryMap.get("PID_TOPUCK").setWeapon1_IID_name("IID_WATOU");
         // Move Marcia
@@ -829,6 +898,23 @@ public class RootControler {
 
         fullLog.close();
         growthsLog.close();
+        saveChanges();
+    }
+
+    @FXML
+    private void dontRandomizeSaveAndQuit() throws IOException{
+        SystemIO.eliminateBlessedArmor(rootDirectory);
+        SystemIO.ch1ItemScriptStuff(rootDirectory);
+        SystemIO.promoteRangerAndTheif(rootDirectory);
+        SystemIO.laguzRoyalsPreventDepromote(rootDirectory);
+
+        // Ch 1 house
+        SystemIO.writeCh1HouseItem(rootDirectory, ch1ItemComboBox.getValue());
+        // Move Marcia
+        disposEntryMap.get("PID_MARCIA").setCoordinates(23, 2, 23, 9);
+        // Move Jill
+        disposEntryMap.get("PID_JILL").setCoordinates(14, 13, 15, 11);
+
         saveChanges();
     }
 

@@ -60,7 +60,8 @@ public class Compressor {
     }
 
     public static void compressLZ77_disposFiles(Collection<DisposFile> files) throws IOException, InterruptedException{
-        List<String> filePaths = new ArrayList<>();
+        Set<String> filePaths = new HashSet<>();
+
         for(DisposFile disposFile : files){
             filePaths.add(disposFile.getFilePath());
         }

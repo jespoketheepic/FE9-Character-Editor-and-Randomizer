@@ -7,6 +7,8 @@ import contents.math.ByteMath;
 // TODO: Test CRITRISE, CHARISMA, 50Keys, EQ_B, Key0, Fixedbeast. Lumina on someone without staves but with staff rank. REMEMBER THAT CRITRISE IS NOT IN JP!!
 public class Skill implements SystemCmpContents{
 
+    private static final int NA_OFFSET = -0x78;
+
     private String skillName;
     private int category; // 1 for normal, 2 for mastery, 3 for things that might work, 4 for things to keep your hands off
     private String SID_name;
@@ -34,13 +36,56 @@ public class Skill implements SystemCmpContents{
         // the Skill table was moved a little between versions
         if (SVar.region == 0x10){
             // NA case
-            this.SID_pointer = ByteMath.byteArrayAddInt(ByteMath.hexStringToByteArray(parameters[3]), -0x78);
+            this.SID_pointer = ByteMath.byteArrayAddInt(ByteMath.hexStringToByteArray(parameters[3]), NA_OFFSET);
         } else {
             // PAL case
             this.SID_pointer = ByteMath.hexStringToByteArray(parameters[3]);
         }
     }
 
+    ////////////
+    // Static //
+    ////////////
+
+    public static int unregionalize_Pointer(int skillPointerInt){
+        if (SVar.region == 0x10){
+            // NA case
+            return skillPointerInt - NA_OFFSET;
+        } else {
+            // PAL case
+            return skillPointerInt;
+        }
+    }
+
+    public static int regionalize_Pointer(int skillPointerInt){
+        if (SVar.region == 0x10){
+            // NA case
+            return skillPointerInt + NA_OFFSET;
+        } else {
+            // PAL case
+            return skillPointerInt;
+        }
+    }
+
+    public static byte[] unregionalize_Pointer(byte[] skillPointer){
+        if (SVar.region == 0x10){
+            // NA case
+            return ByteMath.byteArrayAddInt(skillPointer, -NA_OFFSET);
+        } else {
+            // PAL case
+            return skillPointer;
+        }
+    }
+
+    public static byte[] regionalize_Pointer(byte[] skillPointer){
+        if (SVar.region == 0x10){
+            // NA case
+            return ByteMath.byteArrayAddInt(skillPointer, NA_OFFSET);
+        } else {
+            // PAL case
+            return skillPointer;
+        }
+    }
 
     /////////////
     // Getters //

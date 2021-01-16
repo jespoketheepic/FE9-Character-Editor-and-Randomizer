@@ -15,7 +15,7 @@ public class AutoReader {
     public static void readDataToFile(){
 
 //        try {
-//            File dest = new File("C:\\Users\\jespo\\Documents\\FE Randomizers\\PoR\\Path of Radiance editing\\system3.cmp");
+//            File dest = new File("C:\\HARD\\CODE\\A\\PATH");
 //            RandomAccessFile destFile = new RandomAccessFile(dest, "rw");
 //            destFile.seek(0x001455A0);
 //
@@ -45,8 +45,8 @@ public class AutoReader {
 //        ////////////////////////////////////////////////////
 //        // Hardcode what we are reading here for each run //
 //        ////////////////////////////////////////////////////
-//        File source = new File("C:\\Users\\jespo\\Documents\\FE Randomizers\\PoR\\Path of Radiance editing\\system_ORIGINAL.cmp.decompressed");
-//        File dest = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\Items.txt");
+//        File source = new File("C:\\HARD\\CODE\\A\\PATH");
+//        File dest = new File("C:\\HARD\\CODE\\A\\PATH");
 //        byte entrySeparator = 0x00;
 //        int sourceOffset = 0x000161F6;
 //        ////////////////////////////////////////////////////
@@ -78,8 +78,8 @@ public class AutoReader {
         ////////////////////////////////////////////////////
 //        // Hardcode what we are reading here for each run //
 //        ////////////////////////////////////////////////////
-//        File source = new File("C:\\Users\\jespo\\Documents\\FE Randomizers\\PoR\\Path of Radiance editing\\system_ORIGINAL.cmp.decompressed");
-//        File dest = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\Portraits.txt");
+//        File source = new File("C:\\HARD\\CODE\\A\\PATH");
+//        File dest = new File("C:\\HARD\\CODE\\A\\PATH");
 //        byte entrySeparator = 0x00;
 //        int sourceOffset = 0x00042D08; // 0x00015D49; //
 //        ////////////////////////////////////////////////////
@@ -109,8 +109,8 @@ public class AutoReader {
         ////////////////////////////////////////////////////
         // Hardcode what we are reading here for each run //
         ////////////////////////////////////////////////////
-        File source = new File("C:\\Users\\jespo\\Documents\\FE Randomizers\\PoR\\Path of Radiance editing\\system_ORIGINAL_decompressed.cmp");
-        File dest = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\MPID.txt");
+        File source = new File("C:\\HARD\\CODE\\A\\PATH");
+        File dest = new File("C:C:\\HARD\\CODE\\A\\PATH");
         byte entrySeparator = 0x00;
         int sourceOffset = 0x00018F4B;
         ////////////////////////////////////////////////////
@@ -141,8 +141,8 @@ public class AutoReader {
 //        ////////////////////////////////////////////////////
 //        // Hardcode what we are reading here for each run //
 //        ////////////////////////////////////////////////////
-//        File source = new File("C:\\Users\\jespo\\Documents\\FE Randomizers\\PoR\\Path of Radiance editing\\system_ORIGINAL.cmp.decompressed");
-//        File dest = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\Portraits.txt");
+//        File source = new File("C:\\HARD\\CODE\\A\\PATH");
+//        File dest = new File("C:\\HARD\\CODE\\A\\PATH");
 //        byte entrySeparator = 0x00;
 //        int sourceOffset = 0x00042D08; // 0x00015D49; //
 //        ////////////////////////////////////////////////////
@@ -172,8 +172,8 @@ public class AutoReader {
 //        ////////////////////////////////////////////////////
 //        // Hardcode what we are reading here for each run //
 //        ////////////////////////////////////////////////////
-//        File source = new File("C:\\Users\\jespo\\Documents\\FE Randomizers\\PoR\\Path of Radiance editing\\system_ORIGINAL.cmp.decompressed");
-//        File dest = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\Animations.txt");
+//        File source = new File("C:\\HARD\\CODE\\A\\PATH");
+//        File dest = new File("C:\\HARD\\CODE\\A\\PATH");
 //        byte entrySeparator = 0x00;
 //        int sourceOffset = 0x00026754; //0x00014C9A;
 //        ////////////////////////////////////////////////////
@@ -206,10 +206,10 @@ public class AutoReader {
 //        ////////////////////////////////////////////////////
 //        // Hardcode what we are reading here for each run //
 //        ////////////////////////////////////////////////////
-//        File source1 = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\ClassNames.txt");
-//        File source2 = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\ClassSystemCmpPointers.bin");
-//        File source3 = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\ClassData.bin");
-//        File dest = new File("C:\\Users\\jespo\\IdeaProjects\\FE9Randomizer2.0\\resources\\Class.txt");
+//        File source1 = new File("C:\\HARD\\CODE\\A\\PATH");
+//        File source2 = new File("C:\\HARD\\CODE\\A\\PATH");
+//        File source3 = new File("C:\\HARD\\CODE\\A\\PATH");
+//        File dest = new File("C:\\HARD\\CODE\\A\\PATH");
 //        byte entrySeparator = 0x00;
 ////        int sourceOffset = 0x00;
 //        ////////////////////////////////////////////////////
